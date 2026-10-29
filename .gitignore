@@ -8,29 +8,7 @@
 *.py
 *.log
 *.csv
-biblioteca-ia/
-imagenes/
-static/
 
-# Paginas y estilos de otros proyectos locales
-asistente_estudio.*
-asistente_ia.html
-chatbot_robotica.*
-code_reviewer.html
-dashboard_interactivo.*
-generador_codigo.*
-generador_historias.*
-gestor_tareas.*
-personal.*
-plataforma_completa.html
-programa_con_errores.html
-quiz_master.html
-quiz_naturaleza_ciencia.html
-sistema_estudiantes.*
-styles.css
-institucion.html
-javascript_demo.html
-index.html
 
 # Python / entornos
 __pycache__/

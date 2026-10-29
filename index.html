@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Recommendation System</title>
+    <!-- Tailwind CSS for modern, responsive UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf8f6',
+                            100: '#f2e8e5',
+                            500: '#9b2c2c',
+                            600: '#822727',
+                            700: '#631717',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for clean aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-full flex flex-col antialiased">
+
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-700 text-white flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-book-open-reader text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 tracking-tight">LitMatch AI</h1>
+                    <p class="text-xs text-slate-500">Sistema de Recomendación por Filtrado de Contenido</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="app.resetPreferences()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-lg transition-colors flex items-center space-x-1.5">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Limpiar Filtros</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Panel: User Preferences & Filters -->
+        <section class="lg:col-span-4 space-y-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-base font-bold text-slate-900 flex items-center space-x-2">
+                        <i class="fa-solid fa-sliders text-amber-700"></i>
+                        <span>Tus Preferencias</span>
+                    </h2>
+                    <span id="selected-count" class="text-xs font-semibold bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full">0 seleccionados</span>
+                </div>
+                <p class="text-sm text-slate-500 mb-6 leading-relaxed">
+                    Selecciona las etiquetas, temáticas o géneros que te interesen para calcular la compatibilidad en tiempo real mediante el coeficiente de Jaccard.
+                </p>
+
+                <!-- Search Input inside preferences -->
+                <div class="relative mb-6">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-search"></i>
+                    </span>
+                    <input type="text" id="tag-search" oninput="app.filterTags(this.value)" placeholder="Buscar etiquetas..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-700 focus:bg-white transition-all">
+                </div>
+
+                <!-- Dynamic Tag Selector Container -->
+                <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Etiquetas Disponibles</h3>
+                    <div id="tags-container" class="flex flex-wrap gap-2 max-h-96 overflow-y-auto pr-1">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Algorithm Info Card -->
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-6 shadow-md">
+                <h3 class="text-sm font-bold flex items-center space-x-2 mb-2">
+                    <i class="fa-solid fa-square-root-variable text-amber-400"></i>
+                    <span>¿Cómo funciona el cálculo?</span>
+                </h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Utilizamos la <strong>Similitud de Jaccard</strong>: medimos la intersección entre tus etiquetas seleccionadas y las características del libro, dividida entre su unión total. ¡Un puntaje exacto de afinidad literaria!
+                </p>
+            </div>
+        </section>
+
+        <!-- Right Panel: Recommendations & Dataset -->
+        <section class="lg:col-span-8 space-y-6">
+            <!-- Tabs & Results Header -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Libros Recomendados para Ti</h2>
+                    <p class="text-sm text-slate-500" id="results-subtitle">Basado en coincidencia de etiquetas en tiempo real</p>
+                </div>
+                <div class="flex items-center space-x-2 bg-slate-100 p-1 rounded-xl">
+                    <button onclick="app.setTab('recommendations')" id="tab-recs" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all bg-white text-slate-900 shadow-xs">
+                        Recomendaciones (<span id="recs-count">0</span>)
+                    </button>
+                    <button onclick="app.setTab('dataset')" id="tab-data" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                        Dataset Manual (<span id="total-books-count">0</span>)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recommendations Grid -->
+            <div id="recommendations-view" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Dataset View (Hidden by default) -->
+            <div id="dataset-view" class="hidden space-y-4">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                    <h3 class="text-base font-bold text-slate-900 mb-4">Catálogo Completo del Dataset Manual</h3>
+                    <div id="dataset-container" class="grid grid-cols-1 gap-4">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            LitMatch AI &copy; 2026 • Sistema de Recomendación Interactivo con Algoritmo de Similitud de Jaccard
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 text-sm">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-message">Acción completada</span>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Manual Dataset of Books
+        const booksDataset = [
+            {
+                id: 1,
+                titulo: "Dune",
+                autor: "Frank Herbert",
+                genero: "Ciencia Ficción",
+                año: 1965,
+                descripcion: "Épica espacial en el planeta desértico Arrakis, abordando política, ecología y poder.",
+                tags: ["ciencia ficción", "espacio", "política", "futuro", "aventura", "épico"]
+            },
+            {
+                id: 2,
+                titulo: "Neuromante",
+                autor: "William Gibson",
+                genero: "Ciencia Ficción",
+                año: 1984,
+                descripcion: "La obra maestra del ciberpunk que popularizó el concepto de ciberespacio e inteligencia artificial.",
+                tags: ["ciencia ficción", "ciberpunk", "tecnología", "futuro", "ia", "oscuridad"]
+            },
+            {
+                id: 3,
+                titulo: "El Hobbit",
+                autor: "J.R.R. Tolkien",
+                genero: "Fantasía",
+                año: 1937,
+                descripcion: "La clásica aventura de Bilbo Bolsón junto a un grupo de enanos y el mago Gandalf.",
+                tags: ["fantasía", "magia", "aventura", "dragones", "viaje", "clásico"]
+            },
+            {
+                id: 4,
+                titulo: "El Señor de los Anillos",
+                autor: "J.R.R. Tolkien",
+                genero: "Fantasía",
+                año: 1954,
+                descripcion: "La monumental lucha por la Tierra Media para destruir el Anillo Único.",
+                tags: ["fantasía", "magia", "aventura", "épico", "guerra", "clásico"]
+            },
+            {
+                id: 5,
+                titulo: "Crimen y Castigo",
+                autor: "Fiódor Dostoyevski",
+                genero: "Clásico",
+                año: 1866,
+                descripcion: "Profundo análisis psicológico y moral de un exestudiante en San Petersburgo.",
+                tags: ["clásico", "psicología", "filosofía", "drama", "crimen", "reflexivo"]
+            },
+            {
+                id: 6,
+                titulo: "Clean Code",
+                autor: "Robert C. Martin",
+                genero: "Tecnología",
+                año: 2008,
+                descripcion: "Manual de estilo para escribir código legible, mantenible y profesional.",
+                tags: ["programación", "desarrollo", "tecnología", "educativo", "ingeniería"]
+            },
+            {
+                id: 7,
+                titulo: "Fundación",
+                autor: "Isaac Asimov",
+                genero: "Ciencia Ficción",
+                año: 1951,
+                descripcion: "Un visionario matemático predice la caída del Imperio Galáctico y busca preservar el conocimiento.",
+                tags: ["ciencia ficción", "espacio", "futuro", "filosofía", "imperio", "ciencia"]
+            },
+            {
+                id: 8,
+                titulo: "El Psicoanalista",
+                autor: "John Katzenbach",
+                genero: "Suspense",
+                año: 2002,
+                descripcion: "Un brillante psicoanalista recibe una amenaza anónima que le obliga a un juego macabro.",
+                tags: ["suspense", "psicología", "misterio", "crimen", "thriller"]
+            },
+            {
+                id: 9,
+                titulo: "Sapiens: De animales a dioses",
+                autor: "Yuval Noah Harari",
+                genero: "No Ficción",
+                año: 2011,
+                descripcion: "Breve historia de la humanidad desde la prehistoria hasta el siglo XXI.",
+                tags: ["historia", "ciencia", "filosofía", "educativo", "sociedad", "no ficción"]
+            },
+            {
+                id: 10,
+                titulo: "Elantris",
+                autor: "Brandon Sanderson",
+                genero: "Fantasía",
+                año: 2005,
+                descripcion: "Una poderosa ciudad mágica decae de repente, alterando el destino de todo un reino.",
+                tags: ["fantasía", "magia", "misterio", "política", "épico", "aventura"]
+            }
+        ];
+
+        class BookRecommendationApp {
+            constructor() {
+                this.selectedTags = new Set();
+                this.currentTab = 'recommendations';
+                this.tagSearchQuery = '';
+                this.init();
+            }
+
+            init() {
+                this.renderTags();
+                this.renderRecommendations();
+                this.renderDataset();
+                document.getElementById('total-books-count').textContent = booksDataset.length;
+            }
+
+            // Extract all unique tags across the manual dataset
+            getAllTags() {
+                const tagSet = new Set();
+                booksDataset.forEach(book => {
+                    book.tags.forEach(tag => tagSet.add(tag));
+                });
+                return Array.from(tagSet).sort();
+            }
+
+            toggleTag(tag) {
+                if (this.selectedTags.has(tag)) {
+                    this.selectedTags.delete(tag);
+                } else {
+                    this.selectedTags.add(tag);
+                }
+                this.renderTags();
+                this.renderRecommendations();
+                document.getElementById('selected-count').textContent = `${this.selectedTags.size} seleccionados`;
+            }
+
+            resetPreferences() {
+                this.selectedTags.clear();
+                this.renderTags();
+                this.renderRecommendations();
+                document.getElementById('selected-count').textContent = '0 seleccionados';
+                this.showToast('Preferencias restablecidas');
+            }
+
+            filterTags(query) {
+                this.tagSearchQuery = query.toLowerCase();
+                this.renderTags();
+            }
+
+            setTab(tab) {
+                this.currentTab = tab;
+                const recsBtn = document.getElementById('tab-recs');
+                const dataBtn = document.getElementById('tab-data');
+                const recsView = document.getElementById('recommendations-view');
+                const dataView = document.getElementById('dataset-view');
+
+                if (tab === 'recommendations') {
+                    recsBtn.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all bg-white text-slate-900 shadow-xs";
+                    dataBtn.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900";
+                    recsView.classList.remove('hidden');
+                    dataView.classList.add('hidden');
+                } else {
+                    dataBtn.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all bg-white text-slate-900 shadow-xs";
+                    recsBtn.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900";
+                    dataView.classList.remove('hidden');
+                    recsView.classList.add('hidden');
+                }
+            }
+
+            // Advanced Matching Algorithm: Jaccard Similarity
+            calculateJaccardSimilarity(userTagsSet, bookTags) {
+                if (userTagsSet.size === 0) return 0.0;
+                
+                const bookTagsSet = new Set(bookTags);
+                let intersectionCount = 0;
+                
+                userTagsSet.forEach(tag => {
+                    if (bookTagsSet.has(tag)) {
+                        intersectionCount++;
+                    }
+                });
+
+                // Union = Size(A) + Size(B) - Intersection
+                const unionSize = userTagsSet.size + bookTagsSet.size - intersectionCount;
+                if (unionSize === 0) return 0.0;
+
+                return intersectionCount / unionSize;
+            }
+
+            renderTags() {
+                const container = document.getElementById('tags-container');
+                const allTags = this.getAllTags();
+                const filteredTags = allTags.filter(tag => tag.includes(this.tagSearchQuery));
+
+                if (filteredTags.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-slate-400 py-2">No se encontraron etiquetas</p>`;
+                    return;
+                }
+
+                container.innerHTML = filteredTags.map(tag => {
+                    const isSelected = this.selectedTags.has(tag);
+                    return `
+                        <button onclick="app.toggleTag('${tag}')" class="px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center space-x-1.5 ${
+                            isSelected 
+                                ? 'bg-amber-700 text-white shadow-xs' 
+                                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }">
+                            <span>#${tag}</span>
+                            ${isSelected ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+                        </button>
+                    `;
+                }).join('');
+            }
+
+            renderRecommendations() {
+                const container = document.getElementById('recommendations-view');
+                
+                // Calculate match score for all books
+                const scoredBooks = booksDataset.map(book => {
+                    const score = this.calculateJaccardSimilarity(this.selectedTags, book.tags);
+                    return {
+                        ...book,
+                        matchPercentage: Math.round(score * 100)
+                    };
+                });
+
+                // Sort by match percentage descending
+                scoredBooks.sort((a, b) => b.matchPercentage - a.matchPercentage);
+
+                document.getElementById('recs-count').textContent = scoredBooks.length;
+
+                container.innerHTML = scoredBooks.map(book => {
+                    const badgeColor = book.matchPercentage >= 50 
+                        ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+                        : book.matchPercentage > 0 
+                            ? 'bg-amber-100 text-amber-800 border-amber-200' 
+                            : 'bg-slate-100 text-slate-600 border-slate-200';
+
+                    return `
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-start justify-between gap-2 mb-2">
+                                    <div>
+                                        <span class="text-[11px] font-semibold text-amber-700 uppercase tracking-wider">${book.genero} • ${book.año}</span>
+                                        <h3 class="text-base font-bold text-slate-900">${book.titulo}</h3>
+                                        <p class="text-xs text-slate-500 font-medium">por ${book.autor}</p>
+                                    </div>
+                                    <div class="px-2.5 py-1 rounded-lg border text-xs font-bold ${badgeColor} flex items-center space-x-1 shrink-0">
+                                        <i class="fa-solid fa-chart-pie text-[10px]"></i>
+                                        <span>${book.matchPercentage}% match</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed mb-4">${book.descripcion}</p>
+                            </div>
+                            <div>
+                                <div class="flex flex-wrap gap-1.5 pt-3 border-t border-slate-100">
+                                    ${book.tags.map(tag => {
+                                        const isHighlighted = this.selectedTags.has(tag);
+                                        return `<span class="text-[10px] px-2 py-0.5 rounded-md font-medium ${isHighlighted ? 'bg-amber-700 text-white' : 'bg-slate-100 text-slate-600'}">#${tag}</span>`;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderDataset() {
+                const container = document.getElementById('dataset-container');
+                container.innerHTML = booksDataset.map(book => `
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">ID: ${book.id}</span>
+                                <h4 class="text-sm font-bold text-slate-900">${book.titulo} <span class="font-normal text-slate-500">(${book.año})</span></h4>
+                            </div>
+                            <p class="text-xs text-slate-600">Autor: <span class="font-semibold">${book.autor}</span> | Género: <span class="font-semibold">${book.genero}</span></p>
+                            <p class="text-xs text-slate-500">${book.descripcion}</p>
+                        </div>
+                        <div class="flex flex-wrap gap-1 max-w-xs shrink-0">
+                            ${book.tags.map(t => `<span class="text-[10px] bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600">#${t}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            showToast(message) {
+                const toast = document.getElementById('toast');
+                document.getElementById('toast-message').textContent = message;
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 2500);
+            }
+        }
+
+        // Initialize application instance
+        const app = new BookRecommendationApp();
+    </script>
+</body>
+</html>
