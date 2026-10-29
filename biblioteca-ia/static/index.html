@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lumen, una biblioteca inteligente con recomendaciones generadas por IA local.">
+    <title>Lumen · Biblioteca inteligente</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <svg class="svg-defs" aria-hidden="true">
+        <symbol id="i-compass" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"></path>
+        </symbol>
+        <symbol id="i-book" viewBox="0 0 24 24">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path>
+            <path d="M8 7h8M8 11h6"></path>
+        </symbol>
+        <symbol id="i-sparkles" viewBox="0 0 24 24">
+            <path d="m12 3-1.2 3.3L7.5 7.5l3.3 1.2L12 12l1.2-3.3 3.3-1.2-3.3-1.2L12 3Z"></path>
+            <path d="m18.5 13-1 2.5-2.5 1 2.5 1 1 2.5 1-2.5 2.5-1-2.5-1-1-2.5Z"></path>
+            <path d="m5.5 14-1 2.2-2.2 1 2.2 1 1 2.2 1-2.2 2.2-1-2.2-1-1-2.2Z"></path>
+        </symbol>
+        <symbol id="i-search" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-4-4"></path>
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12h14"></path>
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24">
+            <path d="M5 12h14M13 6l6 6-6 6"></path>
+        </symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24">
+            <path d="M20 7v5h-5"></path>
+            <path d="M4 17v-5h5"></path>
+            <path d="M6.1 9A7 7 0 0 1 18.6 7M17.9 15A7 7 0 0 1 5.4 17"></path>
+        </symbol>
+        <symbol id="i-star" viewBox="0 0 24 24">
+            <path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.4l6.1-.9L12 3Z"></path>
+        </symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 7v5l3 2"></path>
+        </symbol>
+        <symbol id="i-user" viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4 21a8 8 0 0 1 16 0"></path>
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24">
+            <path d="m5 12 4 4L19 6"></path>
+        </symbol>
+        <symbol id="i-history" viewBox="0 0 24 24">
+            <path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path>
+            <path d="M3 3v5h5M12 7v5l3 2"></path>
+        </symbol>
+        <symbol id="i-send" viewBox="0 0 24 24">
+            <path d="m22 2-7 20-4-9-9-4 20-7Z"></path>
+            <path d="M22 2 11 13"></path>
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24">
+            <path d="m6 6 12 12M18 6 6 18"></path>
+        </symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24">
+            <path d="M12 3 5 6v5c0 4.5 3 8.2 7 10 4-1.8 7-5.5 7-10V6l-7-3Z"></path>
+            <path d="m9 12 2 2 4-5"></path>
+        </symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24">
+            <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>
+        </symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24">
+            <path d="m9 18 6-6-6-6"></path>
+        </symbol>
+        <symbol id="i-library" viewBox="0 0 24 24">
+            <path d="M4 3h4v18H4zM10 3h4v18h-4zM17 4l3 17"></path>
+        </symbol>
+        <symbol id="i-info" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 11v5M12 8h.01"></path>
+        </symbol>
+        <symbol id="i-arrow-up" viewBox="0 0 24 24">
+            <path d="M7 17 17 7M8 7h9v9"></path>
+        </symbol>
+    </svg>
+
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="brand" href="#" data-view-link="discover" aria-label="Lumen, inicio">
+                <span class="brand-mark"><span></span><span></span><span></span></span>
+                <span class="brand-text">
+                    <strong>Lumen</strong>
+                    <small>Biblioteca inteligente</small>
+                </span>
+            </a>
+
+            <nav class="main-nav" aria-label="Navegación principal">
+                <button class="nav-item is-active" type="button" data-view="discover">
+                    <span class="nav-icon"><svg><use href="#i-compass"></use></svg></span>
+                    <span>Descubrir</span>
+                </button>
+                <button class="nav-item" type="button" data-view="reading">
+                    <span class="nav-icon"><svg><use href="#i-book"></use></svg></span>
+                    <span>Mi lectura</span>
+                    <span class="nav-badge" id="active-loan-badge" hidden>0</span>
+                </button>
+                <button class="nav-item" type="button" data-view="assistant">
+                    <span class="nav-icon"><svg><use href="#i-sparkles"></use></svg></span>
+                    <span>Asistente IA</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-feature">
+                <span class="feature-icon"><svg><use href="#i-shield"></use></svg></span>
+                <div>
+                    <strong>IA privada y local</strong>
+                    <p>Tus lecturas nunca salen de este dispositivo.</p>
+                </div>
+            </div>
+
+            <button class="profile-card" type="button" id="profile-button">
+                <span class="avatar" id="profile-avatar">L</span>
+                <span class="profile-copy">
+                    <strong id="profile-name">Lector invitado</strong>
+                    <small>Editar perfil</small>
+                </span>
+                <svg class="profile-arrow"><use href="#i-chevron"></use></svg>
+            </button>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="page-heading">
+                    <span id="page-eyebrow">Biblioteca inteligente</span>
+                    <h1 id="page-title">Descubrir</h1>
+                </div>
+                <div class="topbar-actions">
+                    <label class="global-search" for="global-search">
+                        <svg><use href="#i-search"></use></svg>
+                        <input id="global-search" type="search" placeholder="Buscar por título, autor o tema..." autocomplete="off">
+                        <kbd>/</kbd>
+                    </label>
+                    <button class="icon-button desktop-only" id="add-book-button" type="button" aria-label="Añadir un libro" title="Añadir un libro">
+                        <svg><use href="#i-plus"></use></svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="views">
+                <section class="view is-active" id="view-discover" data-view-panel="discover">
+                    <section class="hero">
+                        <div class="hero-copy">
+                            <span class="eyebrow light"><svg><use href="#i-sparkles"></use></svg> Curaduría con IA local</span>
+                            <h2>Una biblioteca que <em>te conoce.</em></h2>
+                            <p>Descubre tu próxima lectura entre historias elegidas a partir de tus gustos, no de tendencias vacías.</p>
+                            <div class="hero-actions">
+                                <button class="button button-cream" type="button" id="hero-ai-button">
+                                    Hablar con Lumen
+                                    <svg><use href="#i-arrow"></use></svg>
+                                </button>
+                                <button class="button button-ghost-light" type="button" id="hero-catalog-button">Explorar catálogo</button>
+                            </div>
+                            <div class="hero-meta">
+                                <div class="mini-avatars" aria-hidden="true">
+                                    <span>R</span><span>A</span><span>M</span>
+                                </div>
+                                <p><strong id="hero-reader-count">0</strong> lectores ya han encontrado su próxima historia.</p>
+                            </div>
+                        </div>
+                        <div class="hero-art" aria-hidden="true">
+                            <div class="orbit orbit-one"></div>
+                            <div class="orbit orbit-two"></div>
+                            <div class="floating-book hero-book-one cover-ember">
+                                <span class="book-spine"></span>
+                                <small>Fantasía</small>
+                                <strong>El nombre<br>del viento</strong>
+                                <span>P. Rothfuss</span>
+                            </div>
+                            <div class="floating-book hero-book-two cover-cosmos">
+                                <span class="book-spine"></span>
+                                <small>Ciencia ficción</small>
+                                <strong>Klara<br>y el sol</strong>
+                                <span>K. Ishiguro</span>
+                            </div>
+                            <div class="floating-book hero-book-three cover-aurora">
+                                <span class="book-spine"></span>
+                                <small>Clásico</small>
+                                <strong>El<br>principito</strong>
+                                <span>A. de Saint-Exupéry</span>
+                            </div>
+                            <div class="ai-orb"><svg><use href="#i-sparkles"></use></svg></div>
+                        </div>
+                    </section>
+
+                    <section class="metrics" id="stats-row" aria-label="Estadísticas de la biblioteca">
+                        <article class="metric-card">
+                            <span class="metric-icon"><svg><use href="#i-library"></use></svg></span>
+                            <div><strong id="stat-books">—</strong><span>Títulos en la colección</span></div>
+                        </article>
+                        <article class="metric-card">
+                            <span class="metric-icon"><svg><use href="#i-check"></use></svg></span>
+                            <div><strong id="stat-available">—</strong><span>Disponibles ahora</span></div>
+                        </article>
+                        <article class="metric-card">
+                            <span class="metric-icon"><svg><use href="#i-user"></use></svg></span>
+                            <div><strong id="stat-readers">—</strong><span>Lectores activos</span></div>
+                        </article>
+                        <article class="metric-card">
+                            <span class="metric-icon"><svg><use href="#i-star"></use></svg></span>
+                            <div><strong id="stat-rating">—</strong><span>Valoración media</span></div>
+                        </article>
+                    </section>
+
+                    <section class="section-block">
+                        <div class="section-heading">
+                            <div>
+                                <span class="eyebrow"><svg><use href="#i-sparkles"></use></svg> Selección inteligente</span>
+                                <h2 id="recommendation-title">Joyas de la biblioteca</h2>
+                                <p id="recommendation-copy">Los títulos mejor valorados, listos para viajar contigo.</p>
+                            </div>
+                            <button class="text-button" type="button" id="refresh-recommendations">
+                                <svg><use href="#i-refresh"></use></svg>
+                                Renovar
+                            </button>
+                        </div>
+                        <div class="book-grid featured-grid" id="recommendation-grid" aria-live="polite">
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                        </div>
+                    </section>
+
+                    <section class="section-block catalog-block" id="catalog-section">
+                        <div class="section-heading catalog-heading">
+                            <div>
+                                <span class="eyebrow"><svg><use href="#i-book"></use></svg> Catálogo completo</span>
+                                <h2>Encuentra tu historia</h2>
+                                <p id="catalog-count">Explorando la colección</p>
+                            </div>
+                            <div class="filter-row">
+                                <label class="filter-search">
+                                    <svg><use href="#i-search"></use></svg>
+                                    <input id="catalog-search" type="search" placeholder="Título, autor, etiqueta..." autocomplete="off">
+                                </label>
+                                <label class="select-wrap">
+                                    <select id="genre-filter" aria-label="Filtrar por género">
+                                        <option value="">Todos los géneros</option>
+                                    </select>
+                                </label>
+                                <label class="select-wrap">
+                                    <select id="availability-filter" aria-label="Filtrar por disponibilidad">
+                                        <option value="all">Todos</option>
+                                        <option value="available">Disponibles</option>
+                                        <option value="borrowed">Prestados</option>
+                                    </select>
+                                </label>
+                                <label class="select-wrap">
+                                    <select id="sort-filter" aria-label="Ordenar catálogo">
+                                        <option value="featured">Destacados</option>
+                                        <option value="rating">Mejor valorados</option>
+                                        <option value="newest">Más recientes</option>
+                                        <option value="title">Título A–Z</option>
+                                        <option value="pages">Más breves</option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="book-grid catalog-grid" id="catalog-grid" aria-live="polite"></div>
+                        <div class="empty-state" id="catalog-empty" hidden>
+                            <span class="empty-icon"><svg><use href="#i-search"></use></svg></span>
+                            <h3>No encontramos esa historia</h3>
+                            <p>Prueba con otro título, autor o elimina algunos filtros.</p>
+                            <button class="button button-secondary" type="button" id="clear-filters">Limpiar filtros</button>
+                        </div>
+                    </section>
+                </section>
+
+                <section class="view" id="view-reading" data-view-panel="reading" hidden>
+                    <section class="reading-hero">
+                        <div>
+                            <span class="eyebrow"><svg><use href="#i-chart"></use></svg> Mi lectura</span>
+                            <h2 id="reading-greeting">Tu recorrido lector</h2>
+                            <p id="reading-summary">Cada préstamo ayuda a Lumen a entender qué historias te mueven.</p>
+                        </div>
+                        <button class="button button-primary" type="button" data-go-assistant>
+                            <svg><use href="#i-sparkles"></use></svg>
+                            Pedir una recomendación
+                        </button>
+                    </section>
+
+                    <div class="reading-layout">
+                        <section class="panel active-loans-panel">
+                            <div class="panel-heading">
+                                <div>
+                                    <span class="eyebrow"><svg><use href="#i-book"></use></svg> Ahora mismo</span>
+                                    <h2>En tus manos</h2>
+                                </div>
+                                <span class="count-pill" id="active-loan-count">0 libros</span>
+                            </div>
+                            <div id="active-loans-list" class="loan-list"></div>
+                        </section>
+
+                        <section class="panel insight-panel">
+                            <div class="panel-heading">
+                                <div>
+                                    <span class="eyebrow"><svg><use href="#i-sparkles"></use></svg> Perfil generado por IA</span>
+                                    <h2>Tu ADN lector</h2>
+                                </div>
+                            </div>
+                            <div class="insight-stats">
+                                <div><strong id="insight-books">0</strong><span>Libros explorados</span></div>
+                                <div><strong id="insight-pages">0</strong><span>Páginas recorridas</span></div>
+                            </div>
+                            <div class="genre-profile" id="genre-profile"></div>
+                            <div class="ai-note">
+                                <span class="ai-note-icon"><svg><use href="#i-sparkles"></use></svg></span>
+                                <p id="insight-summary">Toma prestado tu primer libro para activar tu perfil lector.</p>
+                            </div>
+                        </section>
+                    </div>
+
+                    <section class="panel history-panel">
+                        <div class="panel-heading">
+                            <div>
+                                <span class="eyebrow"><svg><use href="#i-history"></use></svg> Memoria lectora</span>
+                                <h2>Historial de préstamos</h2>
+                            </div>
+                        </div>
+                        <div id="loan-history" class="history-list"></div>
+                    </section>
+                </section>
+
+                <section class="view assistant-view" id="view-assistant" data-view-panel="assistant" hidden>
+                    <div class="assistant-layout">
+                        <section class="chat-card">
+                            <header class="chat-header">
+                                <div class="assistant-identity">
+                                    <span class="assistant-avatar"><svg><use href="#i-sparkles"></use></svg></span>
+                                    <div>
+                                        <h2>Lumen</h2>
+                                        <p><span class="status-dot"></span> Bibliotecario IA · local</p>
+                                    </div>
+                                </div>
+                                <button class="icon-button subtle" type="button" id="clear-chat" aria-label="Nueva conversación" title="Nueva conversación">
+                                    <svg><use href="#i-refresh"></use></svg>
+                                </button>
+                            </header>
+                            <div class="chat-messages" id="chat-messages" aria-live="polite">
+                                <div class="message message-assistant">
+                                    <span class="message-avatar"><svg><use href="#i-sparkles"></use></svg></span>
+                                    <div class="message-body">
+                                        <p id="chat-welcome">Hola. Soy Lumen, tu bibliotecario digital. Cuéntame qué te apetece leer y buscaré entre los estantes.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chat-suggestions" id="chat-suggestions"></div>
+                            <form class="chat-composer" id="chat-form">
+                                <textarea id="chat-input" rows="1" maxlength="600" placeholder="Pregúntame por un libro, un género o una emoción..." aria-label="Mensaje para Lumen"></textarea>
+                                <button class="send-button" type="submit" aria-label="Enviar mensaje">
+                                    <svg><use href="#i-send"></use></svg>
+                                </button>
+                            </form>
+                            <p class="chat-disclaimer">Lumen usa IA local y puede equivocarse. Las recomendaciones se basan en el catálogo de esta biblioteca.</p>
+                        </section>
+
+                        <aside class="assistant-aside">
+                            <section class="panel assistant-context">
+                                <span class="eyebrow"><svg><use href="#i-user"></use></svg> Tu contexto</span>
+                                <h2 id="assistant-context-name">Lector invitado</h2>
+                                <p>Lumen personaliza cada respuesta con los libros que has tomado prestados.</p>
+                                <div class="context-stat"><strong id="context-loans">0</strong><span>préstamos registrados</span></div>
+                                <div class="context-stat"><strong id="context-genre">—</strong><span>género favorito</span></div>
+                                <button class="text-button" type="button" id="go-reading">Ver mi perfil lector <svg><use href="#i-arrow"></use></svg></button>
+                            </section>
+
+                            <section class="panel how-it-works">
+                                <span class="eyebrow"><svg><use href="#i-sparkles"></use></svg> Cómo pienso</span>
+                                <h2>Tres capas de afinidad</h2>
+                                <ol class="process-list">
+                                    <li><span>01</span><div><strong>Contenido</strong><p>Temas, atmósferas y etiquetas de cada obra.</p></div></li>
+                                    <li><span>02</span><div><strong>Tu historial</strong><p>Géneros y autores con los que disfrutas más.</p></div></li>
+                                    <li><span>03</span><div><strong>Disponibilidad</strong><p>Solo recomiendo historias que puedes llevar hoy.</p></div></li>
+                                </ol>
+                            </section>
+                        </aside>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <dialog class="modal book-modal" id="book-dialog">
+        <button class="modal-close" type="button" data-close-dialog="book-dialog" aria-label="Cerrar">
+            <svg><use href="#i-close"></use></svg>
+        </button>
+        <div id="book-detail"></div>
+    </dialog>
+
+    <dialog class="modal form-modal" id="add-dialog">
+        <button class="modal-close" type="button" data-close-dialog="add-dialog" aria-label="Cerrar">
+            <svg><use href="#i-close"></use></svg>
+        </button>
+        <div class="modal-heading">
+            <span class="eyebrow"><svg><use href="#i-plus"></use></svg> Nuevo título</span>
+            <h2>Añadir a la colección</h2>
+            <p>La IA usará estos datos para conectar el libro con nuevos lectores.</p>
+        </div>
+        <form id="add-book-form" class="book-form">
+            <div class="form-row">
+                <label>Título<input name="title" type="text" maxlength="160" required placeholder="El jardín de las horas"></label>
+                <label>Autoría<input name="author" type="text" maxlength="160" required placeholder="Clara Ferrer"></label>
+            </div>
+            <div class="form-row three">
+                <label>Género<input name="genre" type="text" maxlength="80" required placeholder="Fantasía"></label>
+                <label>Año<input name="year" type="number" min="1000" max="2100" required value="2026"></label>
+                <label>Páginas<input name="pages" type="number" min="1" max="5000" required placeholder="320"></label>
+            </div>
+            <div class="form-row">
+                <label>Valoración<input name="rating" type="number" min="0" max="5" step="0.1" value="4.5"></label>
+                <label>Portada
+                    <select name="cover">
+                        <option value="forest">Bosque</option>
+                        <option value="ember">Ámbar</option>
+                        <option value="cosmos">Cosmos</option>
+                        <option value="sand">Arena</option>
+                        <option value="rose">Rosa</option>
+                        <option value="ocean">Océano</option>
+                        <option value="violet">Violeta</option>
+                        <option value="night">Noche</option>
+                        <option value="aurora">Aurora</option>
+                        <option value="moss">Musgo</option>
+                    </select>
+                </label>
+            </div>
+            <label>Descripción<textarea name="description" rows="3" maxlength="2000" placeholder="Una historia sobre..."></textarea></label>
+            <label>Etiquetas separadas por comas<input name="tags" type="text" maxlength="300" placeholder="magia, amistad, aventura"></label>
+            <p class="form-error" id="add-form-error" role="alert"></p>
+            <div class="form-actions">
+                <button class="button button-secondary" type="button" data-close-dialog="add-dialog">Cancelar</button>
+                <button class="button button-primary" type="submit">Añadir libro</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog class="modal profile-modal" id="profile-dialog">
+        <button class="modal-close" type="button" data-close-dialog="profile-dialog" aria-label="Cerrar">
+            <svg><use href="#i-close"></use></svg>
+        </button>
+        <div class="modal-heading">
+            <span class="eyebrow"><svg><use href="#i-user"></use></svg> Identidad lectora</span>
+            <h2>¿Cómo te llamas?</h2>
+            <p>Tu nombre permite asociar préstamos y recomendaciones. Se guarda solo en este navegador.</p>
+        </div>
+        <form id="profile-form" class="profile-form">
+            <label>Nombre de lector/a<input name="borrower" type="text" maxlength="60" required placeholder="Clara Montes"></label>
+            <p class="form-hint">Puedes usar un apodo. No necesitas contraseña.</p>
+            <div class="form-actions">
+                <button class="button button-secondary" type="button" data-close-dialog="profile-dialog">Cancelar</button>
+                <button class="button button-primary" type="submit">Guardar perfil</button>
+            </div>
+        </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+        <span class="toast-icon"><svg><use href="#i-check"></use></svg></span>
+        <span id="toast-message"></span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

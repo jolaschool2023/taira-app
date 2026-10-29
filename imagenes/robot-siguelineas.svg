@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200">
+  <rect width="280" height="200" fill="#ecfdf1"/>
+  <rect x="0" y="175" width="280" height="25" fill="#333"/>
+  <rect x="30" y="80" width="90" height="60" rx="10" fill="#2a9d8f"/>
+  <rect x="35" y="65" width="80" height="24" rx="8" fill="#21867a"/>
+  <circle cx="50" cy="85" r="5" fill="#fff"/>
+  <circle cx="100" cy="85" r="5" fill="#fff"/>
+  <circle cx="70" cy="115" r="7" fill="#fff"/>
+  <rect x="38" y="125" width="74" height="12" rx="4" fill="#21867a"/>
+  <circle cx="70" cy="150" r="16" fill="#f4a261"/>
+  <rect x="160" y="120" width="70" height="16" rx="8" fill="#2a9d8f"/>
+  <circle cx="195" cy="135" r="7" fill="#fff"/>
+  <circle cx="190" cy="175" r="10" fill="#f4a261"/>
+  <circle cx="200" cy="175" r="10" fill="#f4a261"/>
+  <text x="140" y="130" text-anchor="middle" font-family="Arial" font-size="13" fill="#1d6d63" font-weight="bold">Camino</text>
+</svg>

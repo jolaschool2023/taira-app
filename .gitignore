@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Logs y datos locales
+*.log
+biblioteca-ia/data/*.db
+
+# Vercel / entornos
+.vercel
+.env
+.env.local
+**/.env.local
+
+# Sistema
+.DS_Store
+Thumbs.db

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Historias Interactivas</title>
+    <link rel="stylesheet" href="generador_historias.css">
+</head>
+<body>
+
+    <header class="cabecera">
+        <h1>Generador de Historias Interactivas</h1>
+        <p>Elige personaje, lugar, objeto y situación. Luego toma decisiones que cambian el final</p>
+    </header>
+
+    <div class="contenedor">
+
+        <!-- Pantalla 1: selección de elementos -->
+        <section id="pantallaSeleccion" aria-label="Selección de elementos de la historia">
+
+            <section class="grupo" aria-labelledby="tituloPersonaje">
+                <h2 id="tituloPersonaje">1. Personaje</h2>
+                <div class="rejilla" id="rejillaPersonajes"></div>
+            </section>
+
+            <section class="grupo" aria-labelledby="tituloLugar">
+                <h2 id="tituloLugar">2. Lugar</h2>
+                <div class="rejilla" id="rejillaLugares"></div>
+            </section>
+
+            <section class="grupo" aria-labelledby="tituloObjeto">
+                <h2 id="tituloObjeto">3. Objeto</h2>
+                <div class="rejilla" id="rejillaObjetos"></div>
+            </section>
+
+            <section class="grupo" aria-labelledby="tituloSituacion">
+                <h2 id="tituloSituacion">4. Situación</h2>
+                <div class="rejilla" id="rejillaSituaciones"></div>
+            </section>
+
+            <p class="aviso" id="avisoFaltan" role="status"></p>
+
+            <div class="barra">
+                <button type="button" class="boton-secundario" id="botonAleatorio">Sorpréndeme</button>
+                <button type="button" class="boton-principal" id="botonGenerar" disabled>Generar historia</button>
+            </div>
+        </section>
+
+        <!-- Pantalla 2: historia con decisiones -->
+        <section id="pantallaHistoria" hidden aria-label="Historia generada">
+
+            <div class="chips" id="chipsResumen"></div>
+            <p class="progreso" id="progresoPaso">Paso 0</p>
+
+            <article class="caja-historia" id="cajaHistoria"></article>
+
+            <div class="decisiones" id="cajaDecisiones"></div>
+
+            <section class="panel-final" id="panelFinal" hidden>
+                <h3 id="tituloFinal"></h3>
+                <p class="etiqueta-resumen">Decisiones tomadas</p>
+                <ol id="listaDecisiones"></ol>
+                <div class="barra">
+                    <button type="button" class="boton-claro" id="botonOtraVez">Jugar otra vez (mismos elementos)</button>
+                    <button type="button" class="boton-claro" id="botonCambiar">Cambiar selección</button>
+                </div>
+            </section>
+
+            <div class="barra" id="barraHistoria">
+                <button type="button" class="boton-secundario" id="botonReiniciar">Volver a empezar</button>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="generador_historias.js"></script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Interactivo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            transition: all 0.5s ease;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .buttons-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-mensaje { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .btn-color { background: linear-gradient(135deg, #eb3349, #f45c43); }
+        .btn-titulo { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .btn-mostrar { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .btn-ocultar { background: linear-gradient(135deg, #fa709a, #fee140); }
+        .btn-darkmode { background: linear-gradient(135deg, #0c0c0c, #434343); }
+
+        .output-box {
+            background: #f8f9fa;
+            border: 2px dashed #ddd;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        #titulo-resultado {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        #mensaje-resultado {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-box h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .info-box p {
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .color-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 10px;
+            vertical-align: middle;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+
+        body.dark-mode .container {
+            background: #1e1e2e;
+        }
+
+        body.dark-mode h1 {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .subtitle {
+            color: #aaa;
+        }
+
+        body.dark-mode .output-box {
+            background: #2a2a3a;
+            border-color: #444;
+        }
+
+        body.dark-mode #titulo-resultado {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode #mensaje-resultado {
+            color: #ccc;
+        }
+
+        body.dark-mode .info-box {
+            background: linear-gradient(135deg, #2d3436, #636e72);
+        }
+
+        .btn-darkmode.active {
+            box-shadow: 0 0 0 3px #fff, 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        footer {
+            margin-top: 30px;
+            color: white;
+            text-align: center;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 id="main-title">JavaScript Interactivo</h1>
+        <p class="subtitle">Prueba los botones para ver las diferentes acciones en acción</p>
+
+        <div class="buttons-container">
+            <button class="btn btn-mensaje" onclick="mostrarMensaje()">
+                Mostrar Mensaje
+            </button>
+            <button class="btn btn-color" onclick="cambiarColor()">
+                Cambiar Color
+            </button>
+            <button class="btn btn-titulo" onclick="cambiarTitulo()">
+                Cambiar Título
+            </button>
+            <button class="btn btn-mostrar" onclick="mostrarInfo()">
+                Mostrar Info
+            </button>
+            <button class="btn btn-ocultar" onclick="ocultarInfo()">
+                Ocultar Info
+            </button>
+            <button class="btn btn-darkmode" id="darkmode-btn" onclick="toggleDarkMode()">
+                Modo Oscuro
+            </button>
+        </div>
+
+        <div class="output-box">
+            <h2 id="titulo-resultado">Título Original</h2>
+            <p id="mensaje-resultado">Haz clic en los botones para interactuar</p>
+        </div>
+
+        <div class="info-box" id="info-box">
+            <h3>Sobre este proyecto</h3>
+            <p>Esta página demuestra el uso de JavaScript para crear interactividad en una página web. Los botones utilizan funciones que manipulan el DOM (Document Object Model) para cambiar contenido, estilos y estructura de la página dinámicamente. El modo oscuro utiliza clases CSS que se activan y desactivan con JavaScript.</p>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <strong>¡Mensaje!</strong> Bienvenido a la demostración de JavaScript
+    </div>
+
+    <footer>
+        <p>Creado con JavaScript puro</p>
+    </footer>
+
+    <script>
+        let isDarkMode = false;
+        let indiceColor = 0;
+        let contadorTitulo = 0;
+
+        const colores = [
+            'linear-gradient(135deg, #667eea, #764ba2)',
+            'linear-gradient(135deg, #11998e, #38ef7d)',
+            'linear-gradient(135deg, #eb3349, #f45c43)',
+            'linear-gradient(135deg, #f093fb, #f5576c)',
+            'linear-gradient(135deg, #4facfe, #00f2fe)',
+            'linear-gradient(135deg, #fa709a, #fee140)',
+            'linear-gradient(135deg, #a18cd1, #fbc2eb)',
+            'linear-gradient(135deg, #ffecd2, #fcb69f)'
+        ];
+
+        const titulos = [
+            'JavaScript Interactivo',
+            '¡Hola Mundo!',
+            'Desarrollo Web',
+            'Programación Dinámica',
+            'DOM Manipulation',
+            'Frontend Development'
+        ];
+
+        function mostrarMensaje() {
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            document.getElementById('titulo-resultado').textContent = '¡Mensaje Mostrado!';
+            document.getElementById('mensaje-resultado').textContent = 'Apareció una notificación en la esquina';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        function cambiarColor() {
+            document.body.style.background = colores[indiceColor];
+            indiceColor = (indiceColor + 1) % colores.length;
+            
+            document.getElementById('titulo-resultado').textContent = 'Color Cambiado';
+            document.getElementById('mensaje-resultado').innerHTML = 
+                'Nuevo fondo aplicado <span class="color-indicator" style="background:' + 
+                colores[indiceColor].match(/#[a-fA-F0-9]{6}/)[0] + '"></span>';
+        }
+
+        function cambiarTitulo() {
+            contadorTitulo = (contadorTitulo + 1) % titulos.length;
+            const titulo = titulos[contadorTitulo];
+            
+            document.getElementById('main-title').textContent = titulo;
+            document.getElementById('titulo-resultado').textContent = titulo;
+            document.getElementById('mensaje-resultado').textContent = 'El título principal ha cambiado';
+            document.title = titulo + ' | Demo';
+        }
+
+        function mostrarInfo() {
+            const infoBox = document.getElementById('info-box');
+            infoBox.style.display = 'block';
+            document.getElementById('titulo-resultado').textContent = 'Información Visible';
+            document.getElementById('mensaje-resultado').textContent = 'Se mostró la caja de información';
+        }
+
+        function ocultarInfo() {
+            const infoBox = document.getElementById('info-box');
+            infoBox.style.display = 'none';
+            document.getElementById('titulo-resultado').textContent = 'Información Oculta';
+            document.getElementById('mensaje-resultado').textContent = 'Se ocultó la caja de información';
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            
+            const btn = document.getElementById('darkmode-btn');
+            btn.classList.toggle('active', isDarkMode);
+            btn.textContent = isDarkMode ? 'Modo Claro' : 'Modo Oscuro';
+            
+            document.getElementById('titulo-resultado').textContent = 
+                isDarkMode ? 'Modo Oscuro Activado' : 'Modo Claro Activado';
+            document.getElementById('mensaje-resultado').textContent = 
+                isDarkMode ? 'Todos los colores han cambiado a tema oscuro' : 'Se restauró el tema claro';
+        }
+    </script>
+
+</body>
+</html>

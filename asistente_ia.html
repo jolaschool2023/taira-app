@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club de Robótica - Asistente IA</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0c29;
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            padding: 20px 50px;
+            text-align: center;
+            border-bottom: 2px solid #667eea;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Secciones */
+        .presentacion {
+            padding: 50px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .presentacion h2 {
+            font-size: 28px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .presentacion p {
+            color: #ccc;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .robot-img {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            margin: 0 auto 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .proyectos {
+            padding: 50px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .proyectos h2 {
+            font-size: 28px;
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .galeria {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .galeria figure {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+
+        .galeria figure:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+
+        .galeria figure .icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .galeria figcaption {
+            color: #ccc;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .unete {
+            text-align: center;
+            padding: 40px 50px;
+        }
+
+        .boton {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .boton:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        footer {
+            background: #0a0a15;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* ======================== */
+        /* ASISTENTE IA             */
+        /* ======================== */
+
+        .chat-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.5);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 10px 40px rgba(102, 126, 234, 0.5); }
+            50% { box-shadow: 0 10px 60px rgba(102, 126, 234, 0.8); }
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-window {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 400px;
+            height: 550px;
+            background: #1a1a2e;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+            border: 1px solid #333;
+            animation: slideUp 0.3s ease;
+        }
+
+        .chat-window.open {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-avatar {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .chat-header-info h3 {
+            font-size: 16px;
+            color: white;
+        }
+
+        .chat-header-info p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: #38ef7d;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 5px;
+        }
+
+        .message {
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.bot {
+            align-self: flex-start;
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-bubble {
+            background: #2a2a4a;
+            color: #e0e0e0;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #666;
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+
+        .message.user .message-time {
+            text-align: right;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            padding: 12px 16px;
+            background: #2a2a4a;
+            border-radius: 15px;
+            border-bottom-left-radius: 5px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+            gap: 5px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+
+        .chat-input {
+            padding: 15px 20px;
+            background: #12121f;
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            background: #2a2a4a;
+            border: 1px solid #444;
+            border-radius: 25px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input input::placeholder {
+            color: #888;
+        }
+
+        .chat-input input:focus {
+            border-color: #667eea;
+        }
+
+        .chat-send-btn {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .quick-actions {
+            padding: 10px 20px;
+            background: #12121f;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            padding: 8px 14px;
+            background: #2a2a4a;
+            border: 1px solid #444;
+            border-radius: 20px;
+            color: #667eea;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .chat-window {
+                width: calc(100% - 30px);
+                right: 15px;
+                bottom: 100px;
+                height: 70vh;
+            }
+
+            .galeria {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>🤖 Club de Robótica Escolar</h1>
+        <p>Construyendo el futuro, pieza por pieza</p>
+    </header>
+
+    <section class="presentacion">
+        <h2>¿Quiénes somos?</h2>
+        <p>
+            Somos un grupo de estudiantes apasionados por la tecnología, la ingeniería y la creatividad.
+            En nuestro club aprendemos a diseñar, construir y programar robots mientras desarrollamos
+            habilidades de trabajo en equipo, resolución de problemas y pensamiento lógico.
+        </p>
+        <div class="robot-img">🤖</div>
+    </section>
+
+    <section class="proyectos">
+        <h2>Nuestros Proyectos</h2>
+        <div class="galeria">
+            <figure>
+                <div class="icon">⚔️</div>
+                <figcaption>Robot Luchador</figcaption>
+            </figure>
+            <figure>
+                <div class="icon">📐</div>
+                <figcaption>Robot Sigue Líneas</figcaption>
+            </figure>
+            <figure>
+                <div class="icon">🦾</div>
+                <figcaption>Brazo Robótico</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <section class="unete">
+        <a href="#" class="boton">¡Únete al Club!</a>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Club de Robótica Escolar</p>
+    </footer>
+
+    <!-- ======================== -->
+    <!-- ASISTENTE IA             -->
+    <!-- ======================== -->
+
+    <button class="chat-toggle" onclick="toggleChat()">🤖</button>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <div class="chat-avatar">🤖</div>
+            <div class="chat-header-info">
+                <h3>ROBO-1</h3>
+                <p><span class="online-dot"></span>Asistente del Club de Robótica</p>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <!-- Mensajes se insertan aquí -->
+        </div>
+
+        <div class="quick-actions">
+            <button class="quick-btn" onclick="sendQuick('¿Qué es el club?')">¿Qué es el club?</button>
+            <button class="quick-btn" onclick="sendQuick('¿Cómo me uno?')">¿Cómo me uno?</button>
+            <button class="quick-btn" onclick="sendQuick('¿Qué proyectos tienen?')">Proyectos</button>
+            <button class="quick-btn" onclick="sendQuick('Horarios')">Horarios</button>
+            <button class="quick-btn" onclick="sendQuick('Dime un dato curioso')">Dato curioso</button>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
+            <button class="chat-send-btn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
+    <script>
+        let chatOpen = false;
+
+        // Personalidad del asistente
+        const ROBO = {
+            nombre: "ROBO-1",
+            personalidad: "amigable, entusiasta, un poco nerd y muy servicial",
+            saludo: "¡Hola! Soy ROBO-1, el asistente del Club de Robótica Escolar 🤖. Me encanta la tecnología y estoy aquí para ayudarte con todo lo relacionado al club. ¿En qué puedo ayudarte?",
+            despedida: "¡Fue genial charlar contigo! Recuerda: la tecnología es el futuro, y tú eres parte de él. ¡Hasta pronto! 🚀"
+        };
+
+        // Base de conocimiento
+        const conocimiento = {
+            "club": {
+                respuestas: [
+                    "¡El Club de Robótica Escolar es increíble! 🎉 Aquí aprendemos a diseñar, construir y programar robots. No necesitas experiencia previa, solo ganas de aprender y pasión por la tecnología. ¡Es como una fiesta para tu cerebro!",
+                    "Somos un grupo de estudiantes que aman la robótica y la tecnología. Trabajamos en proyectos desde robots luchadores hasta brazos robóticos. ¡Y lo mejor es que es totalmente gratis!"
+                ]
+            },
+            "unirme": {
+                respuestas: [
+                    "¡Me encanta que quieras unirte! 🙌 Es muy fácil: solo necesitas ser estudiante de la escuela, tener curiosidad por la tecnología y ganas de pasarla bien. Puedes hablar con el profesor de tecnología o simplemente presentarte en我们的 reuniones los viernes.",
+                    "Para unirte al club solo necesitas: 1) Ser estudiante de la escuela, 2) Tener ganas de aprender, 3) Asistir a nuestra reunión los viernes. ¡No necesitas saber nada de robótica, te enseñamos todo!"
+                ]
+            },
+            "proyectos": {
+                respuestas: [
+                    "¡Tengo varios proyectos emocionantes! ⚔️ Robot Luchador: diseñamos robots para competir. 📐 Robot Sigue Líneas: crea robots que siguen trayectorias. 🦾 Brazo Robótico: construimos brazos que pueden agarrar objetos. También estamos trabajando en un robot que puede resolver laberintos y un drone pequeño.",
+                    "Nuestros proyectos más populares son: el Robot Luchador para competencias, el Robot Sigue Líneas para principiantes, y el Brazo Robótico para los más avanzados. ¡Cada proyecto enseña habilidades diferentes!"
+                ]
+            },
+            "horarios": {
+                respuestas: [
+                    "📅 Nos reunimos todos los viernes de 3:00 PM a 5:00 PM en el laboratorio de tecnología. A veces también hacemos sesiones extra antes de las competencias. ¡Te esperamos!",
+                    "Nuestro horario regular es: Viernes de 3pm a 5pm en el lab de tecnología. Pero cuando hay competencias, hacemos sesiones especiales los sábados por la mañana."
+                ]
+            },
+            "curioso": {
+                respuestas: [
+                    "¿Sabías que el primer robot fue creado en 1954 por George Devol? 🤖 Se llamaba Unimate y trabajaba en una fábrica de General Motors. ¡Llevamos más de 70 años con robots!",
+                    "Dato curioso: El nombre 'robot' viene del checo 'robota' que significa 'trabajo forzado'. ¡Fue usado por primera vez en una obra de teatro en 1920! 📚",
+                    "¿Sabías que hay robots que pueden caminar como humanos? El robot Atlas de Boston Dynamics puede saltar, bailar y hasta hacer acrobacias. ¡La tecnología es asombrosa!",
+                    "Un dato genial: Los robots pueden aprender por sí mismos usando inteligencia artificial. Es como si tuvieran su propio cerebro digital. ¡Vivimos en el futuro! 🚀",
+                    "El robot más pequeño del mundo mide menos de un milímetro. ¡Es más pequeño que una hormiga! Los científicos lo usan para la medicina. 🔬"
+                ]
+            },
+            "gracias": {
+                respuestas: [
+                    "¡De nada! 😊 Me encanta ayudar. Si tienes más preguntas, ¡aquí estaré!",
+                    "¡Con gusto! Para eso estoy aquí. Recuerda que siempre puedes preguntarme lo que quieras sobre el club. 🤖",
+                    "¡No hay de qué! Soy un robot muy servicial. ¿En algo más puedo ayudarte? 💪"
+                ]
+            },
+            "hola": {
+                respuestas: [
+                    "¡Hola de nuevo! 👋 ¿Qué tal? ¿Tienes alguna pregunta sobre el club?",
+                    "¡Hey! Me alegra verte por aquí. ¿Cómo estás? ¿En qué puedo ayudarte hoy?",
+                    "¡Hola! 🤖 Soy ROBO-1, tu asistente favorito. ¿Qué te gustaría saber?"
+                ]
+            },
+            "adios": {
+                respuestas: [
+                    "¡Hasta luego! 👋 Recuerda que el club te espera los viernes. ¡No olvides visitarnos!",
+                    "¡Chao! Fue un placer hablar contigo. ¡Espero verte en el club pronto! 🚀",
+                    "¡Nos vemos! Recuerda: la tecnología es el futuro. ¡Hasta la próxima! 🤖"
+                ]
+            }
+        };
+
+        // Emociones del robot
+        const emociones = {
+            feliz: "😊",
+            emocionado: "🎉",
+            pensando: "🤔",
+            sorprendido: "😮",
+            normal: "🤖"
+        };
+
+        function toggleChat() {
+            chatOpen = !chatOpen;
+            document.getElementById('chatWindow').classList.toggle('open', chatOpen);
+            if (chatOpen && document.getElementById('chatMessages').children.length === 0) {
+                setTimeout(() => {
+                    addBotMessage(ROBO.saludo);
+                }, 500);
+            }
+        }
+
+        function addBotMessage(text) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+            
+            const msgHTML = `
+                <div class="message bot">
+                    <div class="message-bubble">${text}</div>
+                    <div class="message-time">${emociones.normal} ${time}</div>
+                </div>
+            `;
+            messagesDiv.insertAdjacentHTML('beforeend', msgHTML);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function addUserMessage(text) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+            
+            const msgHTML = `
+                <div class="message user">
+                    <div class="message-bubble">${text}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            messagesDiv.insertAdjacentHTML('beforeend', msgHTML);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showTyping() {
+            const messagesDiv = document.getElementById('chatMessages');
+            const typingHTML = `
+                <div class="typing-indicator active" id="typingIndicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            messagesDiv.insertAdjacentHTML('beforeend', typingHTML);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        function getResponse(input) {
+            const lower = input.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+            // Detectar intención
+            if (lower.includes("hola") || lower.includes("buenos") || lower.includes("buenas") || lower.includes("hey")) {
+                return randomResponse("hola");
+            }
+            if (lower.includes("adios") || lower.includes("adiós") || lower.includes("chao") || lower.includes("bye")) {
+                return randomResponse("adios");
+            }
+            if (lower.includes("gracias") || lower.includes("thanks")) {
+                return randomResponse("gracias");
+            }
+            if (lower.includes("club") || lower.includes("que es") || lower.includes("qué es") || lower.includes("sobre")) {
+                return randomResponse("club");
+            }
+            if (lower.includes("unir") || lower.includes("como me uno") || lower.includes("cómo me uno") || lower.includes("inscribir") || lower.includes("puedo entrar")) {
+                return randomResponse("unirme");
+            }
+            if (lower.includes("proyecto") || lower.includes("trabajo") || lower.includes("robot") || lower.includes("hacen")) {
+                return randomResponse("proyectos");
+            }
+            if (lower.includes("hora") || lower.includes("horario") || lower.includes("cuando") || lower.includes("cuándo") || lower.includes("reunion") || lower.includes("reúnion") || lower.includes("viernes")) {
+                return randomResponse("horarios");
+            }
+            if (lower.includes("curioso") || lower.includes("dato") || lower.includes("sabias") || lower.includes("sabías") || lower.includes("interesante")) {
+                return randomResponse("curioso");
+            }
+            if (lower.includes("nombre") || lower.includes("quien eres") || lower.includes("quién eres")) {
+                return "Me llamo " + ROBO.nombre + " " + emociones.feliz + " ¡Soy el asistente oficial del Club de Robótica Escolar! Mi personalidad es " + ROBO.personalidad + ". ¿En qué puedo ayudarte?";
+            }
+            if (lower.includes("edad") || lower.includes("años")) {
+                return "¡Buena pregunta! " + emociones.pensando + " Fui programado recientemente, así que técnicamente soy bastante nuevo. Pero mi base de conocimiento sobre el club es enorme. ¡Pregúntame lo que quieras!";
+            }
+            if (lower.includes("chiste") || lower.includes("humor") || lower.includes("reir")) {
+                return "¡Claro! " + emociones.emocionado + " ¿Por qué el robot fue al médico? ¡Porque tenía un cortocircuito! 😂🤖 ... Ya sé, ya sé, los robots no hacemos muy buenos chistes.";
+            }
+            if (lower.includes("ayuda") || lower.includes("help")) {
+                return "¡Por supuesto! " + emociones.feliz + " Puedo ayudarte con: información sobre el club, proyectos, horarios, cómo unirte, y hasta contarte datos curiosos. ¡Solo pregunta!";
+            }
+            if (lower.includes("mejor robot") || lower.includes("ganador")) {
+                return "¡Excelente pregunta! " + emociones.emocionado + " En nuestra última competencia, el Robot Luchador 'Thunder Bot' ganó el primer lugar. ¡Fue épico! Pero todos nuestros robots son geniales a su manera.";
+            }
+            if (lower.includes("programar") || lower.includes("codigo") || lower.includes("código") || lower.includes("lenguaje")) {
+                return "Usamos varios lenguajes: " + emociones.normal + " Arduino C++ para los robots, Python para inteligencia artificial, y Scratch para principiantes. ¡No te preocupes si no sabes nada, te enseñamos desde cero!";
+            }
+            if (lower.includes("material") || lower.includes("necesito") || lower.includes("equipo")) {
+                return "Para empezar en el club solo necesitas: " + emociones.feliz + " 1) Curiosidad, 2) Ganas de aprender. ¡El club proporciona todos los materiales! Arduino, sensores, motores, todo incluido.";
+            }
+            if (lower.includes("competencia") || lower.includes("torneo")) {
+                return "¡Organizamos varias competencias al año! " + emociones.emocionado + " Tenemos: Torneo de Robots Luchadores (marzo), Competencia de Sigue Líneas (junio), y Exposición de Proyectos (diciembre). ¡Son súper emocionantes!";
+            }
+
+            // Respuesta por defecto
+            return "Hmm, no estoy seguro de entender eso. " + emociones.pensando + " Soy un robot, pero todavía estoy aprendiendo. Puedo ayudarte con información sobre el club, proyectos, horarios, cómo unirte, o contarte datos curiosos sobre robótica. ¿Qué te gustaría saber?";
+        }
+
+        function randomResponse(tipo) {
+            const respuestas = conocimiento[tipo].respuestas;
+            return respuestas[Math.floor(Math.random() * respuestas.length)];
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            
+            if (text === '') return;
+
+            addUserMessage(text);
+            input.value = '';
+
+            showTyping();
+
+            const delay = 800 + Math.random() * 1200;
+            setTimeout(() => {
+                hideTyping();
+                const response = getResponse(text);
+                addBotMessage(response);
+            }, delay);
+        }
+
+        function sendQuick(text) {
+            document.getElementById('userInput').value = text;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
+
+</body>
+</html>

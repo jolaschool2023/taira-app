@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Interactivo</title>
+    <link rel="stylesheet" href="dashboard_interactivo.css">
+</head>
+<body>
+
+    <header class="cabecera">
+        <h1>Dashboard Interactivo</h1>
+        <p>Importa tu CSV (estudiantes, ventas, productos...) o explora los datos de ejemplo</p>
+        <div class="acciones-cabecera">
+            <label class="btn-importar">
+                📂 Importar CSV
+                <input type="file" id="importador" accept=".csv,text/csv" hidden>
+            </label>
+            <button id="botonEjemplo" class="btn-secundario">↺ Restaurar datos de ejemplo</button>
+            <span id="nombreArchivo" class="nombre-archivo"></span>
+        </div>
+    </header>
+
+    <!-- Tarjetas de resumen -->
+    <section class="resumen" aria-label="Resumen general">
+        <div class="tarjeta total">
+            <span class="numero" id="totalRegistros">0</span>
+            <span class="etiqueta">Registros</span>
+            <small id="totalFiltrados" class="sub"></small>
+        </div>
+        <div class="tarjeta promedio">
+            <span class="numero" id="valorPromedio">0</span>
+            <span class="etiqueta">Promedio de</span>
+            <select id="metrica" class="select-metrica" aria-label="Columna para el promedio"></select>
+        </div>
+        <div class="tarjeta maximo">
+            <span class="numero" id="valorMaximo">0</span>
+            <span class="etiqueta">Máximo de</span>
+            <small class="sub" id="columnaMaximo"></small>
+        </div>
+        <div class="tarjeta minimo">
+            <span class="numero" id="valorMinimo">0</span>
+            <span class="etiqueta">Mínimo de</span>
+            <small class="sub" id="columnaMinimo"></small>
+        </div>
+    </section>
+
+    <!-- Gráfica y tabla de resumen -->
+    <section class="panel">
+        <div class="panel-tarjeta">
+            <div class="controles-grafica">
+                <h3>Gráfica</h3>
+                <select id="tipoGrafica" aria-label="Tipo de gráfica">
+                    <option value="barras">Conteo por categoría</option>
+                    <option value="histograma">Histograma numérico</option>
+                </select>
+                <select id="campoGrafica" aria-label="Columna para la gráfica"></select>
+            </div>
+            <div class="barras" id="contenedorGrafica">
+                <p class="sin-datos">Sin datos</p>
+            </div>
+        </div>
+
+        <div class="panel-tarjeta">
+            <h3>Estadísticas por columna</h3>
+            <div class="contenedor-tabla pequena">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Promedio</th>
+                            <th>Máximo</th>
+                            <th>Mínimo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoResumen"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filtros interactivos -->
+    <section class="filtros">
+        <input type="search" id="buscador" placeholder="Buscar en cualquier columna..." aria-label="Buscar">
+        <div id="filtrosDinamicos" class="filtros-dinamicos"></div>
+        <button id="botonLimpiarFiltros" class="btn-secundario">Limpiar filtros</button>
+    </section>
+
+    <!-- Tabla de datos -->
+    <main>
+        <div class="contenedor-tabla">
+            <table id="tablaDatos">
+                <thead id="cabeceraTabla"></thead>
+                <tbody id="cuerpoTabla"></tbody>
+            </table>
+        </div>
+        <div id="mensajeVacio" class="mensaje-vacio oculto">
+            <p>No hay registros que coincidan con los filtros.</p>
+        </div>
+        <p class="nota">Haz clic en un encabezado de columna para ordenar la tabla.</p>
+    </main>
+
+    <footer>
+        <p>Las estadísticas y la gráfica se actualizan automáticamente según los filtros aplicados.</p>
+    </footer>
+
+    <script src="dashboard_interactivo.js"></script>
+</body>
+</html>

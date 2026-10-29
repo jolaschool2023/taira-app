@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Código con IA</title>
+    <link rel="stylesheet" href="generador_codigo.css">
+</head>
+<body>
+
+    <header class="cabecera">
+        <div class="cabecera-contenido">
+            <span class="logo-codigo">&lt;/&gt;</span>
+            <h1>Generador de Código con IA</h1>
+            <p>Describe el programa que necesitas y recibe una solución con código y explicación en Python, JavaScript o HTML/CSS</p>
+        </div>
+    </header>
+
+    <main class="panel-principal">
+
+        <!-- ==================== Entrada ==================== -->
+        <section class="panel panel-entrada" aria-label="Descripción del programa">
+            <h2><span class="paso">1</span> Describe tu programa</h2>
+
+            <textarea id="descripcion" rows="6"
+                placeholder="Ejemplo: Crea un programa que calcule el promedio de cinco números ingresados por el usuario..."
+                aria-label="Descripción del programa"></textarea>
+            <p id="errorEntrada" class="error oculto">Escribe una descripción del programa antes de generar.</p>
+
+            <div class="ejemplos">
+                <span class="etiqueta-ejemplos">Ejemplos rápidos:</span>
+                <div class="chips" id="chipsEjemplos">
+                    <button type="button" class="chip" data-texto="Crea un programa que calcule el promedio de cinco números">Promedio de 5 números</button>
+                    <button type="button" class="chip" data-texto="Suma dos números ingresados por el usuario">Suma de 2 números</button>
+                    <button type="button" class="chip" data-texto="Calcula el factorial de un número entero">Factorial</button>
+                    <button type="button" class="chip" data-texto="Verifica si un número es par o impar">Par o impar</button>
+                    <button type="button" class="chip" data-texto="Muestra la tabla de multiplicar del 1 al 10">Tabla de multiplicar</button>
+                    <button type="button" class="chip" data-texto="Comprueba si una palabra es un palíndromo">Palíndromo</button>
+                    <button type="button" class="chip" data-texto="Genera los primeros 12 términos de la serie de Fibonacci">Fibonacci</button>
+                    <button type="button" class="chip" data-texto="Convierte una temperatura de Celsius a Fahrenheit">Celsius a Fahrenheit</button>
+                    <button type="button" class="chip" data-texto="Crea una calculadora básica con suma, resta, multiplicación y división">Calculadora</button>
+                    <button type="button" class="chip" data-texto="Encuentra el mayor de tres números">Mayor de 3 números</button>
+                </div>
+            </div>
+
+            <h2><span class="paso">2</span> Elige el lenguaje</h2>
+            <div class="lenguajes" id="selectorLenguaje" role="radiogroup" aria-label="Lenguaje de programación">
+                <button type="button" class="lenguaje activo" data-lenguaje="python" role="radio" aria-checked="true">
+                    <strong>Python</strong>
+                    <small>.py</small>
+                </button>
+                <button type="button" class="lenguaje" data-lenguaje="javascript" role="radio" aria-checked="false">
+                    <strong>JavaScript</strong>
+                    <small>.js</small>
+                </button>
+                <button type="button" class="lenguaje" data-lenguaje="htmlcss" role="radio" aria-checked="false">
+                    <strong>HTML / CSS</strong>
+                    <small>.html</small>
+                </button>
+            </div>
+            <p id="avisoLenguaje" class="aviso-lenguaje oculto">Lenguaje detectado automáticamente en la descripción.</p>
+
+            <button type="button" id="botonGenerar" class="btn-generar">Generar solución</button>
+            <p class="atajo">Atajo: Ctrl + Enter dentro del cuadro de texto</p>
+
+            <div class="historial">
+                <h3>Historial reciente</h3>
+                <div id="listaHistorial" class="lista-historial"></div>
+            </div>
+        </section>
+
+        <!-- ==================== Salida ==================== -->
+        <section class="panel panel-salida" id="panelSalida" aria-label="Solución generada">
+
+            <div id="estadoVacio" class="estado-vacio">
+                <span class="marcador">&lt;/&gt;</span>
+                <h3>Tu solución aparecerá aquí</h3>
+                <p>Escribe una descripción o elige un ejemplo rápido, selecciona el lenguaje y pulsa <strong>Generar solución</strong>.</p>
+            </div>
+
+            <div id="cargando" class="cargando oculto">
+                <div class="ruta"></div>
+                <p>Analizando la solicitud y generando el código<span class="puntos"></span></p>
+            </div>
+
+            <div id="resultado" class="resultado oculto">
+                <div class="resultado-cabecera">
+                    <div class="resultado-titulo">
+                        <h3 id="tituloSolucion"></h3>
+                        <div class="insignias">
+                            <span id="insigniaLenguaje" class="insignia"></span>
+                            <span id="insigniaConfianza" class="insignia confianza"></span>
+                        </div>
+                    </div>
+                    <div class="acciones">
+                        <button type="button" id="botonCopiar" class="btn-accion">Copiar código</button>
+                        <button type="button" id="botonDescargar" class="btn-accion">Descargar</button>
+                    </div>
+                </div>
+
+                <div class="pestanas" role="tablist">
+                    <button type="button" class="pestana activa" data-vista="codigo" role="tab" aria-selected="true">Código</button>
+                    <button type="button" class="pestana" data-vista="explicacion" role="tab" aria-selected="false">Explicación</button>
+                </div>
+
+                <div id="vistaCodigo" class="vista">
+                    <pre class="bloque-codigo"><code id="codigoGenerado"></code></pre>
+                </div>
+
+                <div id="vistaExplicacion" class="vista oculto">
+                    <p id="introSolucion" class="intro-solucion"></p>
+
+                    <h4>Cómo funciona</h4>
+                    <ol id="listaPasos" class="lista-pasos"></ol>
+
+                    <div class="nota-lenguaje">
+                        <h4>Notas en <span id="notaLenguajeTitulo"></span></h4>
+                        <p id="textoNota"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Generador de Código con IA &copy; 2026 &mdash; describe, elige un lenguaje y aprende de la solución propuesta.</p>
+    </footer>
+
+    <script src="generador_codigo.js"></script>
+</body>
+</html>
