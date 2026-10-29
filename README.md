@@ -1,37 +1,40 @@
 # LitMatch AI — Book Recommendation System
 
-Sistema de recomendación de libros por filtrado de contenido (similitud de Jaccard),
-implementado como una única página HTML autocontenida.
+Recomendador de libros por filtrado de contenido (similitud de Jaccard), en una única
+página HTML autocontenida. Sin build, sin backend, sin variables de entorno.
 
-- **App:** [book_recommendation_system.html](book_recommendation_system.html)
-- **Stack:** HTML5 + Tailwind CSS (CDN) + JavaScript vanilla (sin build, sin backend)
-- **Deploy:** Vercel (sitio estático)
+## Contenido del repositorio
 
-## Cómo se sirve
+| Archivo | Descripción |
+| --- | --- |
+| `book_recommendation_system.html` | La app completa (HTML + CSS + JS) |
+| `vercel.json` | Configuración de Vercel: la raíz `/` sirve la app |
+| `README.md` | Este documento |
+| `.gitignore` | Excluye los archivos locales que no forman parte del deploy |
 
-`vercel.json` reescribe la raíz `/` hacia `book_recommendation_system.html`, por lo que
-el dominio publicado muestra directamente la app. El resto de archivos del repositorio
-sigue accesible en su propia ruta (por ejemplo `/index.html`).
+## Publicación en Vercel (proyecto nuevo)
+
+1. <https://vercel.com/new> → importar `jolaschool2023/taira-app`.
+2. Framework Preset: **Other**.
+3. Build Command: vacío · Output Directory: vacío · Root Directory: `./`.
+4. **Deploy**.
+
+Cada `git push` a `main` vuelve a desplegar automáticamente.
+
+## Si el proyecto ya existe y falló el deploy
+
+Settings → General → **Build & Development Settings**:
+
+- Framework Preset: `Other`
+- Build Command: **Override** + dejar vacío
+- Output Directory: **Override** + dejar vacío
+- Install Command: **Override** + dejar vacío
+
+Luego Deployments → *Redeploy*.
 
 ## Desarrollo local
 
-Abre `book_recommendation_system.html` en el navegador, o sirve la carpeta:
-
 ```bash
 python -m http.server 8000
+# http://localhost:8000/book_recommendation_system.html
 ```
-
-## Publicación en Vercel
-
-1. Importar el repositorio en <https://vercel.com/new>.
-2. Framework Preset: **Other**. Build Command: vacío. Output Directory: vacío.
-3. Deploy. Cada `git push` a `main` genera un deploy automático.
-
-## Estructura relevante
-
-| Ruta | Descripción |
-| --- | --- |
-| `book_recommendation_system.html` | App LitMatch AI (página principal publicada) |
-| `vercel.json` | Configuración de Vercel (rewrite de la raíz + headers) |
-| `biblioteca-ia/` | Proyecto Flask "Lumen" (no se publica en este deploy) |
-| `index.html` | Landing del Club de Robótica Escolar |

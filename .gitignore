@@ -1,18 +1,46 @@
-# Python
+# ==========================================================
+# Deploy de Vercel: solo se publica la app LitMatch AI
+# (book_recommendation_system.html + vercel.json)
+# Todo lo demas queda en local y NO se sube al repositorio.
+# ==========================================================
+
+# Proyectos y archivos locales (no forman parte del deploy)
+*.py
+*.log
+*.csv
+biblioteca-ia/
+imagenes/
+static/
+
+# Paginas y estilos de otros proyectos locales
+asistente_estudio.*
+asistente_ia.html
+chatbot_robotica.*
+code_reviewer.html
+dashboard_interactivo.*
+generador_codigo.*
+generador_historias.*
+gestor_tareas.*
+personal.*
+plataforma_completa.html
+programa_con_errores.html
+quiz_master.html
+quiz_naturaleza_ciencia.html
+sistema_estudiantes.*
+styles.css
+institucion.html
+javascript_demo.html
+index.html
+
+# Python / entornos
 __pycache__/
-*.py[cod]
 .venv/
 venv/
 
-# Logs y datos locales
-*.log
-biblioteca-ia/data/*.db
-
-# Vercel / entornos
+# Vercel / secretos
 .vercel
 .env
 .env.local
-**/.env.local
 
 # Sistema
 .DS_Store
